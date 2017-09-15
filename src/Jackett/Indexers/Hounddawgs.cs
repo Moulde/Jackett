@@ -214,7 +214,7 @@ namespace Jackett.Indexers
                     }
                     catch (Exception ex)
                     {
-                        logger.Error(ex, "Error parsing item");
+                        logger.Error(ex, string.Format("{0}: Error while parsing row '{1}'", ID, row.OuterHTML));
                     }
                 }
             }
