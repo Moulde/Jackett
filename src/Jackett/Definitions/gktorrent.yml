@@ -1,20 +1,25 @@
 ---
-  site: zetorrents
-  name: zetorrents
+  site: gktorrent
+  name: GkTorrent
   language: fr-fr
   type: public
   encoding: UTF-8
   links:
-    - http://www.zetorrents.cc/
+    - https://www.gktorrent.com
 
   caps:
     categorymappings:
-      - {id: films, cat: Movies, desc: "Movies"}
-      - {id: series, cat: TV, desc: "TV"}
+      - {id: movies, cat: Movies, desc: "Movies"}
+      - {id: tvshows, cat: TV, desc: "TV Shows"}
+      - {id: softwares, cat: PC, desc: "Softwares"}
+      - {id: music, cat: Audio, desc: "Music"}
+      - {id: games, cat: Console, desc: "Games"}
+      - {id: books, cat: Books, desc: "Books"}
 
     modes:
       search: [q]
       tv-search: [q, season, ep]
+      movie-search: [q]
 
   settings: []
 
@@ -22,9 +27,9 @@
     selector: a[href^="/get_torrent/"]
 
   search:
-    path: "/recherche/{{ .Query.Keywords }}"
+    path: "/search/{{ .Query.Keywords }}"
     rows:
-      selector: div.content-list-torrent > table tbody tr:has(a)
+      selector: div.listing-torrent > table > tbody > tr:has(a)
     fields:
       site_date:
         selector: td:nth-child(1) a
@@ -53,36 +58,20 @@
         attribute: href
       size:
         selector: td:nth-child(2)
-        filters:
-          - name: re_replace
-            args: [ "\\.(\\d) Ko", "$1X00"]
-          - name: re_replace
-            args: [ " Ko", "000"]
-          - name: re_replace
-            args: [ "\\.(\\d) Mo", "$1X00000"]
-          - name: re_replace
-            args: [ " Mo", "000000"]
-          - name: re_replace
-            args: [ "\\.(\\d) Go", "$1X00000000"]
-          - name: re_replace
-            args: [ " Go", "000000000"]
-          - name: re_replace
-            args: [ "\\.(\\d) To", "$1X00000000000"]
-          - name: re_replace
-            args: [ " To", "000000000000"]
-          - name: replace
-            args: [ "X", "" ]
-      seeders:
-        text: 0
       seeders:
         selector: td:nth-child(3)
-        optional: true
-      leechers:
-        text: 0
       leechers:
         selector: td:nth-child(4)
-        optional: true
       downloadvolumefactor:
         text: "0"
       uploadvolumefactor:
         text: "1"
+      category:
+        selector: td:nth-child(1) > i
+        case:
+          .Movies: "movies"
+          .TV: "tvshows"
+          .Softwares: "softwares"
+          .Music: "music"
+          .Games: "games"
+          .Books: "books"
